@@ -1,14 +1,51 @@
 import pandas as pd
 import psycopg2
+import os
 
-def readCSV(file_path, db_config):
+# PostgreSQL database config
+db_config = 
+{
+    'dbname': 'bd_name_here',
+    'user': 'user_name',
+    'password': 'password',
+    'host': 'localhost',
+    'port': '5432' # default port
+}
+
+def process_csv_files_in_folder(directory_path, separator):
+    # Folder exists?
+    if not os.path.isdir(directory_path):
+        print(f"File path {directory_path} doesn't exists.")
+        return
+
+    # Navigates the folder looking for CSV files
+    for each_file in os.listdir(directory_path):
+
+        if each_file.endswith(".csv"):
+            file_path = os.path.join(directory_path, each_file)
+            readCSV(file_path, db_config, separator)
+
+
+def readCSV(file_path, db_config, separator):
+
+    insert_query = ''
+
     # Leer el archivo CSV
     try:
-        data = pd.read_csv(file_path)
+        data = pd.read_csv(file_path, sep=separator)
     except Exception as e:
         print(f"Error while reading CSV file: {e}")
         return
 
+    # validating file name to build the proper insert_query string
+    if "departments" in file_path:
+        insert_query = """ INSERT INTO departments (columna1, columna2) VALUES (%s, %s) """
+    elif "hired_employees" in file_path:
+        insert_query = """ INSERT INTO hired_employees (columna1, columna2, columna3, columna4, columna5) VALUES (%s, %s, %s, %s, %s) """
+    elif "jobs" in file_path:
+        insert_query = """ INSERT INTO jobs (columna1, columna2) VALUES (%s, %s) """
+    else:
+        insert_query = ''
 
     # Trying to connect to the postgres database
     try:
@@ -18,12 +55,11 @@ def readCSV(file_path, db_config):
         print(f"Error while connecting to the PostgreSQL database: {e}")
         return
 
-
     # Inserting file data into table
     try:
         count = 0
         for each_file_line, row in data.iterrows():
-            cursor.execute(insert_query, (row[0], row[1]))
+            cursor.execute(insert_query, (row[0], row[1])) # find a way to adjust parameters depending on the table
             count += 1
             if count % 1000 == 0:
                 conn.commit()
@@ -41,25 +77,10 @@ def readCSV(file_path, db_config):
     print("Datos insertados correctamente.")
 
 
-# List of the files to be processed
-file_paths = ["C:\\Globant_Test\\data_challenge_files\\departments.csv", "C:\\Globant_Test\\data_challenge_files\\hired_employees.csv", "C:\\Globant_Test\\data_challenge_files\\jobs.csv"]
+# Looks for the directory which contains all of the csv files to import
+directory_path = "\\csv_files"
 
 # File separator
 file_separator = ','
 
-# PostgreSQL database config
-db_config = 
-{
-    'dbname': 'bd_name_here',
-    'user': 'user_name',
-    'password': 'password',
-    'host': 'host',
-    'port': '5432' # default port
-}
-
-# Reading collection of file paths
-for each_file_path in file_paths:
-    print("Reading files ...")
-    readCSV(each_file_path, db_config)
-
-print("Finished ...")
+process_csv_files_in_folder(directory_path, file_separator)
