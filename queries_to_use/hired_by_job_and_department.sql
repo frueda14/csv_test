@@ -17,7 +17,7 @@ with joined_emp_dept_job as
 	inner join dim_date as dd
 		on CAST(he.datetime as date) = CAST(dd.event_id as date)
 
-	where dd.year_of_date = '2021'
+	where dd.year_of_date = 2021
 ),
 
 data_grouped as 
