@@ -41,9 +41,13 @@ def readCSV(file_path, db_config):
     print("Datos insertados correctamente.")
 
 
+# List of the files to be processed
 file_paths = ["C:\\Globant_Test\\data_challenge_files\\departments.csv", "C:\\Globant_Test\\data_challenge_files\\hired_employees.csv", "C:\\Globant_Test\\data_challenge_files\\jobs.csv"]
 
-# Configuración de la base de datos PostgreSQL
+# File separator
+file_separator = ','
+
+# PostgreSQL database config
 db_config = 
 {
     'dbname': 'bd_name_here',
@@ -55,7 +59,7 @@ db_config =
 
 # Reading collection of file paths
 for each_file_path in file_paths:
-    print("Reading files")
+    print("Reading files ...")
     readCSV(each_file_path, db_config)
 
 print("Finished ...")
