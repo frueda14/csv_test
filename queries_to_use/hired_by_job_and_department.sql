@@ -6,7 +6,7 @@ with joined_emp_dept_job as
 		he.datetime as employee_hired_date,
 		d.department as department_name,
 		j.job as job_name,
-		dd.date_by_quarter
+		'Q' || dd.quarter_of_year as quarter_of_year
 	from hired_employees as he
 	inner join department as d
 		on he.department_id = d.id
@@ -15,9 +15,9 @@ with joined_emp_dept_job as
 		on he.job_id = j.id
 
 	inner join dim_date as dd
-		on CAST(he.datetime as date) = CAST(dd.event_id as date)
+		on CAST(he.datetime as date) = CAST(dd.date_day as date)
 
-	where dd.year_of_date = 2021
+	where dd.year_number = 2021
 ),
 
 data_grouped as 
@@ -25,12 +25,12 @@ data_grouped as
 	select 
 		department_name,
 		job_name,
-		date_by_quarter,
+		quarter_of_year,
 		count(*) as hired_rwn_cnt
 	from joined_emp_dept_job
 	group by department_name,
 			 job_name,
-			 date_by_quarter
+			 quarter_of_year
 ),
 
 pivoted_dataset as
