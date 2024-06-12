@@ -1,4 +1,6 @@
 -- Query to obtain Number of employees hired for each job and department in 2021 divided by quarter. The table must be ordered alphabetically by department and job.
+-- drop view reports.hired_by_job_and_department;
+create view reports.hired_by_job_and_department as
 with joined_emp_dept_job as
 (
 	select 
@@ -39,27 +41,50 @@ pivoted_dataset as
 		department_name,
 		job_name,
 
-		case 
-			when quarter_of_year = 'Q1' then
-				MAX(hired_rwn_cnt)
-		end as quarter_1,
+		sum(
+				case 
+					when quarter_of_year = 'Q1' then
+						coalesce(hired_rwn_cnt,0)
+				end 
+			) as quarter_1,
 
-		case
-			when quarter_of_year = 'Q2' then
-				MAX(hired_rwn_cnt)
-		end as quarter_2,
+		sum(
+				case 
+					when quarter_of_year = 'Q2' then
+						coalesce(hired_rwn_cnt,0)
+				end 
+			) as quarter_2,
 			
-		case	
-			when quarter_of_year = 'Q3' then
-				MAX(hired_rwn_cnt)
-		end as quarter_3,
+		sum(
+				case 
+					when quarter_of_year = 'Q3' then
+						coalesce(hired_rwn_cnt,0)
+				end 
+			) as quarter_3,
 		
-		case
-			when quarter_of_year = 'Q4' then
-				MAX(hired_rwn_cnt)
-		end as quarter_4
+		sum(
+				case 
+					when quarter_of_year = 'Q4' then
+						coalesce(hired_rwn_cnt,0)
+				end 
+			) as quarter_4
+
 	from  data_grouped
-	group by department_name, job_name, quarter_of_year
+	group by department_name, job_name
+),
+
+final as
+(
+	select 
+		department_name,
+		job_name,
+
+		coalesce(quarter_1,0) as quarter_1,
+		coalesce(quarter_2,0) as quarter_2,
+		coalesce(quarter_3,0) as quarter_3,
+		coalesce(quarter_4,0) as quarter_4
+	from pivoted_dataset
 )
 select *
-from pivoted_dataset
+from final
+order by department_name, job_name

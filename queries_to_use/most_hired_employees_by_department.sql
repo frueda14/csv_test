@@ -1,3 +1,6 @@
+-- List of ids, name and number of employees hired of each department that hired more employees than the mean of employees hired in 2021 for all the departments, ordered by the number of employees hired (descending).
+-- drop view reports.most_hired_employees_by_department;
+create view reports.most_hired_employees_by_department as
 with department_hired_cnt as
 (
 	select 
@@ -37,7 +40,7 @@ most_hired_by_department as
 								avg_hired_2021
 							from avg_year_2021
 							)
-	and year_number > 2021
+	and year_number >= 2021
 )
 select *
 from most_hired_by_department
