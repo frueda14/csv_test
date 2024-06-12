@@ -58,8 +58,6 @@ def readCSV(file_path, db_config, separator):
         data.fillna(value={2: '1990-01-01T23:27:38Z'}, inplace=True)
         data.fillna(value={3: 0}, inplace=True)
         data.fillna(value={4: 0}, inplace=True)
-        column_names = data.columns
-        print(column_names)
     except Exception as e:
         print(f"Error while reading CSV file: {e}")
         return
@@ -90,7 +88,6 @@ def readCSV(file_path, db_config, separator):
             if "departments" in file_path:
                 cursor.executemany(insert_query, [(row.iloc[0], row.iloc[1])])
             elif "hired_employees" in file_path:
-                print([(row.iloc[0], row.iloc[1], row.iloc[2], row.iloc[3], row.iloc[4])])
                 cursor.executemany(insert_query, [(row.iloc[0], row.iloc[1], row.iloc[2], row.iloc[3], row.iloc[4])])
             elif "jobs" in file_path:
                 cursor.executemany(insert_query, [(row.iloc[0], row.iloc[1])])
