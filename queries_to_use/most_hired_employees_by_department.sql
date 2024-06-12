@@ -44,3 +44,4 @@ most_hired_by_department as
 )
 select *
 from most_hired_by_department
+order by hired_rwn_cnt desc
