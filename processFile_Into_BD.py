@@ -3,14 +3,14 @@ import psycopg2
 import os
 
 # PostgreSQL database config
-db_config = 
-{
+db_config = {
     'dbname': 'csv_test_db',
     'user': 'postgres',
     'password': 'postgres2024#',
     'host': 'localhost',
-    'port': '5432' # default port
+    'port': '5432'  # default port
 }
+
 
 def process_csv_files_in_folder(directory_path, separator):
     # Folder exists?
@@ -76,16 +76,18 @@ def readCSV(file_path, db_config, separator):
         conn.commit()  
     except Exception as e:
         conn.rollback()
-        print(f"Error al insertar datos en la tabla: {e}")
+        print(f"Error while inserting data into tables: {e}")
     finally:
         cursor.close()
         conn.close()
 
-    print("Datos insertados correctamente.")
+    print("Data inserted correctly.")
 
 
 # Looks for the directory which contains all of the csv files to import
-directory_path = "\\csv_files"
+directory_path = "C:\\Users\\fabia\\OneDrive\\Documentos\\GitHub\\csv_test"
 # File separator
 file_separator = ','
+print("Starting ...")
 process_csv_files_in_folder(directory_path, file_separator)
+print("Finish ...")
