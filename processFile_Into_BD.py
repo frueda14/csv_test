@@ -52,8 +52,14 @@ def readCSV(file_path, db_config, separator):
 
     # Leer el archivo CSV
     try:
-        data = pd.read_csv(file_path, sep=separator)
-        data.fillna(-1, inplace=True)
+        data = pd.read_csv(file_path, sep=separator, header=None)
+        data.fillna(value={0: 0}, inplace=True)
+        data.fillna(value={1: 'NO NAME'}, inplace=True)
+        data.fillna(value={2: '1990-01-01T23:27:38Z'}, inplace=True)
+        data.fillna(value={3: 0}, inplace=True)
+        data.fillna(value={4: 0}, inplace=True)
+        column_names = data.columns
+        print(column_names)
     except Exception as e:
         print(f"Error while reading CSV file: {e}")
         return
