@@ -5,12 +5,12 @@ with department_hired_cnt as
 		d.department as department_name,
 		dd.year_number,
 		COUNT(*) as hired_rwn_cnt
-	from hired_employees as he
-	inner join department as d
+	from csv_files.hired_employees as he
+	inner join csv_files.departments as d
 		on he.department_id = d.id
 
-	inner join dim_date as dd
-		on CAST(he.datetime as date) = CAST(dd.date_day as date)
+	inner join common.dim_date as dd
+		on CAST(he.hire_datetime as date) = CAST(dd.date_day as date)
 
 	group by 
 		d.id, 
