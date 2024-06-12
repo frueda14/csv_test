@@ -5,9 +5,9 @@ import os
 # PostgreSQL database config
 db_config = 
 {
-    'dbname': 'bd_name_here',
-    'user': 'user_name',
-    'password': 'password',
+    'dbname': 'csv_test_db',
+    'user': 'postgres',
+    'password': 'postgres2024#',
     'host': 'localhost',
     'port': '5432' # default port
 }
@@ -39,11 +39,11 @@ def readCSV(file_path, db_config, separator):
 
     # validating file name to build the proper insert_query string
     if "departments" in file_path:
-        insert_query = """ INSERT INTO departments (columna1, columna2) VALUES (%s, %s) """
+        insert_query = """ INSERT INTO departments (id, department) VALUES (%s, %s) """
     elif "hired_employees" in file_path:
-        insert_query = """ INSERT INTO hired_employees (columna1, columna2, columna3, columna4, columna5) VALUES (%s, %s, %s, %s, %s) """
+        insert_query = """ INSERT INTO hired_employees (id, name, hire_datetime, department_id, job_id) VALUES (%s, %s, %s, %s, %s) """
     elif "jobs" in file_path:
-        insert_query = """ INSERT INTO jobs (columna1, columna2) VALUES (%s, %s) """
+        insert_query = """ INSERT INTO jobs (id, job) VALUES (%s, %s) """
     else:
         insert_query = ''
 
@@ -59,12 +59,19 @@ def readCSV(file_path, db_config, separator):
     try:
         count = 0
         for each_file_line, row in data.iterrows():
-            cursor.execute(insert_query, (row[0], row[1])) # find a way to adjust parameters depending on the table
+
+            if "departments" in file_path:
+                cursor.execute(insert_query, (row[0], row[1]))
+            elif "hired_employees" in file_path:
+                cursor.execute(insert_query, (row[0], row[1], row[2], row[3], row[4]))
+            elif "jobs" in file_path:
+                cursor.execute(insert_query, (row[0], row[1]))
+            else:
+                print(f"Nothing to insert")
             count += 1
             if count % 1000 == 0:
                 conn.commit()
-                print(f"Rows processed {count}.")
-        
+                print(f"Rows processed {count}.") 
         # Final commit to avoid missing any rows after finishing the loop
         conn.commit()  
     except Exception as e:
@@ -79,8 +86,6 @@ def readCSV(file_path, db_config, separator):
 
 # Looks for the directory which contains all of the csv files to import
 directory_path = "\\csv_files"
-
 # File separator
 file_separator = ','
-
 process_csv_files_in_folder(directory_path, file_separator)
