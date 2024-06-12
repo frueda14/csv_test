@@ -1,4 +1,6 @@
 -- Query to obtain Number of employees hired for each job and department in 2021 divided by quarter. The table must be ordered alphabetically by department and job.
+-- drop view reports.hired_by_job_and_department;
+create view reports.hired_by_job_and_department as
 with joined_emp_dept_job as
 (
 	select 
@@ -85,3 +87,4 @@ final as
 )
 select *
 from final
+order by department_name, job_name
